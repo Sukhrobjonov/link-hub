@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="uz" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ profile.name }} | LinkHub Pro</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['"Outfit"', 'sans-serif'] },
+                    animation: {
+                        'reveal': 'reveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+                    },
+                    keyframes: {
+                        reveal: {
+                            '0%': { opacity: '0', transform: 'translateY(60px) scale(0.95) rotateX(10deg)' },
+                            '100%': { opacity: '1', transform: 'translateY(0) scale(1) rotateX(0deg)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Dual Theme Variables */
+        :root {
+            --bg-color: #f1f5f9;
+            --text-main: #0f172a;
+            --text-muted: rgba(15, 23, 42, 0.5);
+            --bento-bg: rgba(255, 255, 255, 0.6);
+            --bento-border-top: rgba(255, 255, 255, 1);
+            --bento-border-main: rgba(255, 255, 255, 0.4);
+            --bento-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.15);
+            --bento-hover-shadow: 0 35px 70px -15px rgba(15, 23, 42, 0.25), inset 0 0 0 1px rgba(255,255,255,0.7);
+            --bento-hover-bg: rgba(255, 255, 255, 0.9);
+            --card-base: #ffffff;
+            --glowing-c1: #38bdf8;
+            --glowing-c2: #f472b6;
+            --glowing-c3: #a78bfa;
+            --glowing-c4: #fcd34d;
+            --glowing-opacity: 0.8;
+            --link-hover-color: #0f172a;
+        }
+
+        html.dark {
+            --bg-color: #000000;
+            --text-main: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --bento-bg: rgba(20, 20, 25, 0.4);
+            --bento-border-top: rgba(255, 255, 255, 0.15);
+            --bento-border-main: rgba(255, 255, 255, 0.08);
+            --bento-shadow: 0 30px 60px -15px rgba(0,0,0,0.5);
+            --bento-hover-shadow: 0 40px 80px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.2);
+            --bento-hover-bg: rgba(255, 255, 255, 0.08);
+            --card-base: #000000;
+            --glowing-c1: #4338ca;
+            --glowing-c2: #be185d;
+            --glowing-c3: #ec4899;
+            --glowing-c4: #38bdf8;
+            --glowing-opacity: 0.35;
+            --link-hover-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow-x: hidden;
+            margin: 0;
+            min-height: 100vh;
+            perspective: 1000px;
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        /* Abstract glowing animated background */
+        .glowing-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1;
+            background: var(--bg-color);
+            overflow: hidden;
+            transition: background 0.4s ease;
+        }
+        .glowing-bg::after {
+            content: ''; 
+            position: absolute; 
+            top: -50%; left: -50%; 
+            width: 200%; height: 200%;
+            background: conic-gradient(from 0deg at 50% 50%, var(--glowing-c1) 0%, var(--glowing-c2) 25%, var(--glowing-c3) 50%, var(--glowing-c4) 75%, var(--glowing-c1) 100%);
+            animation: spin 20s linear infinite;
+            filter: blur(150px);
+            opacity: var(--glowing-opacity);
+            transition: opacity 0.4s ease;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Modern Bento Grid Layout */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: minmax(180px, auto);
+            gap: 1.5rem;
+            max-width: 1050px;
+            width: 100%;
+            padding: 2rem;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 1024px) {
+            .bento-grid { grid-template-columns: repeat(2, 1fr); padding: 1.5rem; }
+        }
+        @media (max-width: 640px) {
+            .bento-grid { grid-template-columns: 1fr; gap: 1rem; padding: 1rem; }
+        }
+
+        /* Glass / Neumorphism Bento Box */
+        .bento-box {
+            background: var(--bento-bg);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--bento-border-main);
+            border-top: 1px solid var(--bento-border-top);
+            border-left: 1px solid var(--bento-border-main);
+            border-radius: 2.5rem;
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            transform-style: preserve-3d;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--bento-shadow);
+        }
+
+        .bento-box::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(circle at top left, rgba(255,255,255,0.4), transparent 70%);
+            z-index: 0; pointer-events: none;
+        }
+        html.dark .bento-box::before {
+            background: radial-gradient(circle at top left, rgba(255,255,255,0.1), transparent 70%);
+        }
+
+        .bento-box:hover {
+            border-color: rgba(255, 255, 255, 0.25);
+            background: var(--bento-hover-bg);
+            box-shadow: var(--bento-hover-shadow);
+            transform: translateY(-8px) scale(1.02);
+            z-index: 50;
+        }
+
+        /* Layout spans */
+        .bento-hero { grid-column: span 2; grid-row: span 2; }
+        .bento-wide { grid-column: span 2; grid-row: span 1; }
+        .bento-square { grid-column: span 1; grid-row: span 1; }
+
+        @media (max-width: 1024px) {
+            .bento-hero { grid-column: span 2; grid-row: auto; }
+            .bento-wide, .bento-square { grid-column: span 1; }
+        }
+        @media (max-width: 640px) {
+            .bento-hero, .bento-wide, .bento-square { grid-column: span 1; }
+        }
+
+        /* 3D Pop elements */
+        .content-z { transform: translateZ(40px); z-index: 10; position: relative; height: 100%; display: flex; flex-direction: column; }
+        
+        /* Typography */
+        .magic-text {
+            background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 50%, #0ea5e9 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textShine 4s linear infinite;
+        }
+        html.dark .magic-text {
+            background: linear-gradient(135deg, #a78bfa 0%, #ec4899 50%, #38bdf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        @keyframes textShine { to { background-position: 200% center; } }
+        
+        /* Icon wrapper */
+        .icon-glass {
+            background: var(--card-base);
+            border: 1px solid rgba(255,255,255,0.6);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+        html.dark .icon-glass {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+        
+        /* Top Right Actions */
+        .top-actions {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            display: flex;
+            gap: 1rem;
+            z-index: 999;
+        }
+        .action-btn {
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 50%;
+            background: var(--bento-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--bento-border-main);
+            box-shadow: var(--bento-shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .action-btn:hover {
+            transform: scale(1.1) rotate(5deg);
+            background: var(--card-base);
+            box-shadow: var(--bento-hover-shadow);
+        }
+        .action-btn i {
+            color: var(--text-main);
+            transition: color 0.3s ease;
+        }
+        /* QR Modal Styles */
+        .modal-overlay {
+            position: fixed; inset: 0; z-index: 2000;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .modal-overlay.active {
+            opacity: 1; pointer-events: auto;
+        }
+        .modal-content {
+            background: var(--bento-bg);
+            border: 1px solid var(--bento-border-top);
+            box-shadow: var(--bento-shadow);
+            border-radius: 2rem;
+            padding: 2.5rem;
+            width: 90%; max-width: 360px;
+            transform: translateY(30px) scale(0.95);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            text-align: center;
+        }
+        .modal-overlay.active .modal-content {
+            transform: translateY(0) scale(1);
+        }
+        .qr-placeholder {
+            width: 220px; height: 220px; margin: 0 auto;
+            border-radius: 1.5rem; background: white;
+            padding: 1rem; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glowing-bg"></div>
+    
+    <!-- Fixed Top Actions -->
+    <div class="top-actions">
+        <!-- QR Code Button -->
+        <button id="qrBtn" class="action-btn group" aria-label="QR Kod">
+            <i data-lucide="qr-code" class="w-6 h-6 text-slate-800 dark:text-white group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors"></i>
+        </button>
+
+        <!-- Share Button -->
+        <button id="shareBtn" class="action-btn group" aria-label="Ulashish">
+            <i data-lucide="share-2" class="w-6 h-6 text-slate-800 dark:text-white group-hover:text-pink-500 dark:group-hover:text-pink-400 transition-colors"></i>
+        </button>
+
+        <!-- Theme Toggle Button -->
+        <button id="themeToggleBtn" class="action-btn" aria-label="Mavzuni o'zgartirish">
+            <i id="sunIcon" data-lucide="sun" class="w-6 h-6 hidden dark:block text-yellow-300"></i>
+            <i id="moonIcon" data-lucide="moon" class="w-6 h-6 block dark:hidden text-indigo-500"></i>
+        </button>
+    </div>
+
+    <!-- Copy Toast Notification -->
+    <div id="toast" class="fixed bottom-10 left-1/2 transform -translate-x-1/2 translate-y-20 opacity-0 pointer-events-none bg-white/80 dark:bg-gray-800/80 backdrop-blur-md text-gray-900 dark:text-white px-6 py-3 rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 transition-all duration-300 z-[1000] flex items-center gap-3">
+        <i data-lucide="check-circle-2" class="w-5 h-5 text-green-500"></i>
+        <span class="font-bold text-sm tracking-wide">Havola nusxalandi!</span>
+    </div>
+
+    <div class="min-h-screen py-8 lg:py-16 flex flex-col items-center justify-center pt-24 lg:pt-16">
+        
+        <div class="bento-grid">
+            
+            <!-- Hero Profile Box -->
+            <div class="bento-box bento-hero opacity-0 animate-reveal" data-tilt data-tilt-max="5" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.2">
+                <div class="content-z flex flex-col items-center justify-center text-center py-6">
+                    <div class="relative mb-8">
+                        <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-[2.5rem] blur-xl opacity-50 scale-110"></div>
+                        <img src="{{ profile.avatar }}" alt="{{ profile.name }}" class="relative w-44 h-44 object-cover object-top rounded-[2.5rem] border-4 border-white/60 dark:border-white/20 shadow-2xl transition-transform duration-500 hover:scale-105 hover:rotate-3">
+                        <div class="absolute -bottom-3 -right-3 bg-gradient-to-br from-indigo-500 to-pink-500 rounded-2xl p-2.5 border-4 border-slate-100 dark:border-[#0a0a0f] shadow-[0_0_30px_rgba(236,72,153,0.6)]">
+                            <i data-lucide="shield-check" class="w-7 h-7 text-white stroke-[2.5]"></i>
+                        </div>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl font-black mb-4 tracking-tighter text-slate-800 dark:text-white">{{ profile.name }}</h1>
+                    <p class="text-lg md:text-xl text-slate-600 dark:text-gray-300 font-medium max-w-sm leading-relaxed mb-6">{{ profile.bio }}</p>
+                    <div class="mt-auto inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.3em] magic-text bg-white/40 dark:bg-white/5 py-3 px-6 rounded-2xl border border-white/40 dark:border-white/10 shadow-xl backdrop-blur-md">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-pink-500 dark:text-pink-400"></i> Premium Profile
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Bento Links Layout -->
+            {% if links %}
+                {% for link in links %}
+                {% set box_class = 'bento-box opacity-0 animate-reveal' %}
+                
+                {% if loop.index == 1 %}
+                    {% set box_class = box_class ~ ' bento-wide dark:bg-gradient-to-br dark:from-indigo-600/20 dark:to-purple-800/20 bg-gradient-to-br from-indigo-100/50 to-purple-200/50' %}
+                {% elif loop.index == 4 %}
+                    {% set box_class = box_class ~ ' bento-wide dark:bg-gradient-to-br dark:from-rose-500/10 dark:to-orange-600/10 bg-gradient-to-br from-rose-100/50 to-orange-200/50' %}
+                {% else %}
+                    {% set box_class = box_class ~ ' bento-square' %}
+                {% endif %}
+                
+                <a href="/click/{{ link.id }}" target="_blank" rel="noopener noreferrer" 
+                   class="{{ box_class }} group relative overflow-hidden" 
+                   style="animation-delay: {{ loop.index * 0.15 }}s;"
+                   data-tilt data-tilt-max="12" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.3">
+                    <div class="content-z flex flex-col justify-between h-full relative z-10 {% if link.title == 'Telegram' %}group-hover:opacity-0 transition-opacity duration-500{% endif %}">
+                        <div class="w-14 h-14 rounded-2xl icon-glass flex items-center justify-center backdrop-blur-xl mb-8 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 group-hover:bg-white/80 dark:group-hover:bg-white/20">
+                            {% if loop.index == 1 %}
+                                <!-- Portfolio -->
+                                <svg class="w-7 h-7 text-indigo-600 dark:text-indigo-400 drop-shadow-[0_0_10px_rgba(79,70,229,0.4)] dark:drop-shadow-[0_0_10px_rgba(129,140,248,0.8)]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                            {% elif loop.index == 2 %}
+                                <!-- Instagram -->
+                                <svg class="w-7 h-7 text-pink-600 dark:text-pink-500 drop-shadow-[0_0_10px_rgba(236,72,153,0.4)] dark:drop-shadow-[0_0_10px_rgba(236,72,153,0.8)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                            {% else %}
+                                <!-- Telegram -->
+                                <svg class="w-7 h-7 text-blue-500 dark:text-blue-400 drop-shadow-[0_0_10px_rgba(96,165,250,0.4)] dark:drop-shadow-[0_0_10px_rgba(96,165,250,0.8)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .24z"/></svg>
+                            {% endif %}
+                        </div>
+                        <div class="mt-auto">
+                            <h2 class="text-2xl font-bold tracking-tight text-slate-800 dark:text-white mb-2 dark:group-hover:text-transparent dark:group-hover:bg-clip-text dark:group-hover:bg-gradient-to-r dark:group-hover:from-white dark:group-hover:to-gray-400 group-hover:text-black transition-all duration-300">
+                                {{ link.title }}
+                            </h2>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-bold text-slate-500 dark:text-white/40 tracking-wider uppercase dark:group-hover:text-white/70 group-hover:text-slate-800 transition-colors">Yangi Sahifa</span>
+                                <div class="w-10 h-10 rounded-full bg-slate-200/50 dark:bg-white/5 flex items-center justify-center transition-all duration-500 group-hover:bg-slate-300 dark:group-hover:bg-white/20 group-hover:translate-x-2 group-hover:-translate-y-2 border border-slate-300/50 dark:border-white/0 dark:group-hover:border-white/20">
+                                    <i data-lucide="arrow-up-right" class="w-5 h-5 text-slate-600 dark:text-white/50 dark:group-hover:text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if link.title == 'Telegram' %}
+                    <!-- Premium Hover QR Overlay -->
+                    <div class="absolute inset-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-[20px] flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-[600ms] ease-[cubic-bezier(0.23,1,0.32,1)] z-20">
+                        <!-- Ambient Glow -->
+                        <div class="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 dark:from-blue-500/20 dark:to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700 delay-100"></div>
+                        
+                        <!-- Animated QR Container -->
+                        <div class="relative flex flex-col items-center translate-y-8 scale-75 group-hover:translate-y-0 group-hover:scale-100 transition-all duration-[700ms] ease-[cubic-bezier(0.34,1.56,0.64,1)]">
+                            <!-- Code Box -->
+                            <div class="p-3 bg-white rounded-[1.5rem] shadow-[0_20px_40px_-10px_rgba(59,130,246,0.4)] dark:shadow-[0_20px_40px_-5px_rgba(0,0,0,0.8)] mb-5 transform group-hover:rotate-0 rotate-6 transition-transform duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)]">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ link.url }}&color=0f172a&bgcolor=ffffff&margin=0" alt="Telegram QR" class="w-28 h-28 rounded-lg mix-blend-multiply">
+                            </div>
+                            
+                            <!-- Staggered Pill Label -->
+                            <div class="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-5 py-2.5 rounded-full shadow-[0_10px_20px_rgba(59,130,246,0.3)] transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-150">
+                                <i data-lucide="scan" class="w-4 h-4 animate-pulse"></i>
+                                <span class="text-[11px] font-black tracking-[0.2em] uppercase">Skanerlash</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </a>
+                {% endfor %}
+            {% else %}
+                <div class="bento-box bento-wide flex flex-col items-center justify-center text-center opacity-0 animate-reveal" style="animation-delay: 0.3s;" data-tilt>
+                    <div class="content-z py-10">
+                        <div class="w-20 h-20 icon-glass rounded-[2rem] mx-auto flex items-center justify-center mb-6">
+                            <i data-lucide="ghost" class="w-10 h-10 text-slate-400 dark:text-white/30"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-800 dark:text-white/80 mb-2">Hozircha bo'sh</h3>
+                        <p class="text-slate-500 dark:text-white/40 font-medium">Baza bilan bog'langan havolalar yo'q</p>
+                    </div>
+                </div>
+            {% endif %}
+            
+        </div>
+        
+    </div>
+
+    <!-- QR Code Modal -->
+    <div id="qrModal" class="modal-overlay">
+        <div class="modal-content">
+            <button id="closeQrBtn" class="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 transition-colors">
+                <i data-lucide="x" class="w-5 h-5 text-slate-800 dark:text-white"></i>
+            </button>
+            <div class="mb-2 w-16 h-16 rounded-2xl bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto shadow-inner">
+                <i data-lucide="qr-code" class="w-8 h-8"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-800 dark:text-white mb-2">QR Profil</h3>
+            <p class="text-slate-500 dark:text-white/50 text-sm mb-6 font-medium">Kuzatish uchun skaner qiling</p>
+            <div class="qr-placeholder relative">
+                <!-- Loader -->
+                <div id="qrLoader" class="absolute inset-0 flex items-center justify-center">
+                    <i data-lucide="loader-2" class="w-8 h-8 text-blue-500 animate-spin"></i>
+                </div>
+                <img id="qrImage" src="" alt="QR Code" class="w-full h-full object-contain rounded-xl opacity-0 transition-opacity duration-300" onload="this.style.opacity=1; document.getElementById('qrLoader').style.display='none';">
+            </div>
+            <div class="mt-8 text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-white/30 truncate px-4">
+                {{ profile.name }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+    <script>
+        // Init icons
+        lucide.createIcons();
+
+        // Theme Toggling Logic
+        const htmlDoc = document.documentElement;
+        const themeBtn = document.getElementById('themeToggleBtn');
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+
+        // Check local storage for theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            htmlDoc.classList.remove('dark');
+        } else if (savedTheme === 'dark') {
+            htmlDoc.classList.add('dark');
+        } else {
+            // Default is dark as per initial design
+            htmlDoc.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+        }
+
+        themeBtn.addEventListener('click', () => {
+            if (htmlDoc.classList.contains('dark')) {
+                htmlDoc.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                htmlDoc.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+
+        // QR Modal Logic
+        const qrBtn = document.getElementById('qrBtn');
+        const qrModal = document.getElementById('qrModal');
+        const closeQrBtn = document.getElementById('closeQrBtn');
+        const qrImage = document.getElementById('qrImage');
+        const qrLoader = document.getElementById('qrLoader');
+
+        function openQrModal() {
+            const currentUrl = encodeURIComponent(window.location.href);
+            qrImage.style.opacity = '0';
+            qrLoader.style.display = 'flex';
+            qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${currentUrl}&margin=0`;
+            qrModal.classList.add('active');
+        }
+
+        function closeQrModal() {
+            qrModal.classList.remove('active');
+        }
+
+        qrBtn.addEventListener('click', openQrModal);
+        closeQrBtn.addEventListener('click', closeQrModal);
+        qrModal.addEventListener('click', (e) => {
+            if (e.target === qrModal) closeQrModal();
+        });
+
+        // Ulashish (Share) Mantig'i
+        const shareBtn = document.getElementById('shareBtn');
+        const toast = document.getElementById('toast');
+
+        function showToast() {
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        shareBtn.addEventListener('click', async () => {
+            const shareData = {
+                title: '{{ profile.name }} | LinkHub',
+                text: 'Mening rasmiy profilim bilan tanishing!',
+                url: window.location.href
+            };
+
+            try {
+                if (navigator.share) {
+                    await navigator.share(shareData);
+                } else {
+                    // Agar Web Share API yo'q bo'lsa
+                    await navigator.clipboard.writeText(window.location.href);
+                    showToast();
+                }
+            } catch (err) {
+                if (err.name !== 'AbortError') {
+                    try {
+                        await navigator.clipboard.writeText(window.location.href);
+                        showToast();
+                    } catch (clipboardErr) {
+                        console.error('Nusxalashda xato:', clipboardErr);
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
