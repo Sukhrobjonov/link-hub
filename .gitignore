@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+service-account.json
+.DS_Store
+.env
+.ipynb_checkpoints/
+fetch_*.py
+download*.py
