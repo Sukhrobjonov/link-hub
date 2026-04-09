@@ -25,8 +25,8 @@
                     },
                     keyframes: {
                         reveal: {
-                            '0%': { opacity: '0', transform: 'translateY(60px) scale(0.95) rotateX(10deg)' },
-                            '100%': { opacity: '1', transform: 'translateY(0) scale(1) rotateX(0deg)' }
+                            '0%': { opacity: '0', transform: 'translateY(30px) scale(0.98)' },
+                            '100%': { opacity: '1', transform: 'translateY(0) scale(1)' }
                         }
                     }
                 }
@@ -37,40 +37,42 @@
     <style>
         /* Dual Theme Variables */
         :root {
-            --bg-color: #f1f5f9;
-            --text-main: #0f172a;
-            --text-muted: rgba(15, 23, 42, 0.5);
-            --bento-bg: rgba(255, 255, 255, 0.6);
-            --bento-border-top: rgba(255, 255, 255, 1);
+            --bg-color: #f1f5f9; /* Slate 50 as per reference */
+            --text-main: #000000;
+            --text-muted: #64748b;
+            --bento-bg: rgba(255, 255, 255, 0.75);
+            --bento-border-top: rgba(255, 255, 255, 0.9);
             --bento-border-main: rgba(255, 255, 255, 0.4);
-            --bento-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.15);
-            --bento-hover-shadow: 0 35px 70px -15px rgba(15, 23, 42, 0.25), inset 0 0 0 1px rgba(255,255,255,0.7);
-            --bento-hover-bg: rgba(255, 255, 255, 0.9);
+            --bento-shadow: 0 15px 35px -5px rgba(0,0,0,0.05);
+            --bento-hover-shadow: 0 25px 50px -10px rgba(0,0,0,0.08);
+            --bento-hover-bg: #ffffff;
             --card-base: #ffffff;
-            --glowing-c1: #38bdf8;
-            --glowing-c2: #f472b6;
-            --glowing-c3: #a78bfa;
-            --glowing-c4: #fcd34d;
-            --glowing-opacity: 0.8;
+            /* Exact Color Palette from link-hub-bay.vercel.app */
+            --glowing-c1: #38bdf8; /* Sky 400 */
+            --glowing-c2: #f472b6; /* Pink 400 */
+            --glowing-c3: #a78bfa; /* Violet 400 */
+            --glowing-c4: #fcd34d; /* Amber 300 */
+            --glowing-opacity: 0.8; /* Full visibility in light mode */
             --link-hover-color: #0f172a;
         }
 
         html.dark {
-            --bg-color: #000000;
-            --text-main: #ffffff;
-            --text-muted: rgba(255, 255, 255, 0.5);
-            --bento-bg: rgba(20, 20, 25, 0.4);
-            --bento-border-top: rgba(255, 255, 255, 0.15);
-            --bento-border-main: rgba(255, 255, 255, 0.08);
+            --bg-color: #000000; 
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --bento-bg: rgba(15, 23, 42, 0.4);
+            --bento-border-top: rgba(255, 255, 255, 0.1);
+            --bento-border-main: rgba(255, 255, 255, 0.05);
             --bento-shadow: 0 30px 60px -15px rgba(0,0,0,0.5);
-            --bento-hover-shadow: 0 40px 80px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.2);
-            --bento-hover-bg: rgba(255, 255, 255, 0.08);
+            --bento-hover-shadow: 0 40px 80px rgba(0,0,0,0.7);
+            --bento-hover-bg: rgba(30, 41, 59, 0.8);
             --card-base: #000000;
-            --glowing-c1: #4338ca;
-            --glowing-c2: #be185d;
-            --glowing-c3: #ec4899;
-            --glowing-c4: #38bdf8;
-            --glowing-opacity: 0.35;
+            /* Reference Dark Mode Palette */
+            --glowing-c1: #4338ca; /* Indigo-700 */
+            --glowing-c2: #be185d; /* Pink-700 */
+            --glowing-c3: #ec4899; /* Pink-500 */
+            --glowing-c4: #38bdf8; /* Sky-400 */
+            --glowing-opacity: 0.35; /* Subtle Ambient Glow */
             --link-hover-color: transparent;
         }
 
@@ -80,32 +82,43 @@
             overflow-x: hidden;
             margin: 0;
             min-height: 100vh;
-            /* Removed global perspective to fix 'fixed' elements on mobile */
-            transition: background-color 0.4s ease, color 0.4s ease;
+            /* Performance: Remove transitions on body for smoother theme toggle */
+            transition: none; 
         }
 
-        /* Abstract glowing animated background */
+        /* Final Bulletproof Spinning Gradient (Mobile Optimized) */
         .glowing-bg {
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            width: 100%; height: 100%;
+            top: -10dvh; 
+            left: -10vw;
+            width: 120vw;
+            height: 120dvh;
             z-index: -1;
-            background: var(--bg-color);
+            background-color: var(--bg-color);
             overflow: hidden;
-            transition: background 0.4s ease;
         }
         .glowing-bg::after {
-            content: ''; 
-            position: absolute; 
-            top: -50%; left: -50%; 
+            content: "";
+            position: absolute;
+            top: -50%; left: -50%;
             width: 200%; height: 200%;
-            background: conic-gradient(from 0deg at 50% 50%, var(--glowing-c1) 0%, var(--glowing-c2) 25%, var(--glowing-c3) 50%, var(--glowing-c4) 75%, var(--glowing-c1) 100%);
-            animation: spin 20s linear infinite;
+            background: conic-gradient(
+                from 0deg at 50% 50%,
+                var(--glowing-c1) 0%,
+                var(--glowing-c2) 25%,
+                var(--glowing-c3) 50%,
+                var(--glowing-c4) 75%,
+                var(--glowing-c1) 100%
+            );
             filter: blur(120px);
             opacity: var(--glowing-opacity);
-            transition: opacity 0.4s ease;
+            animation: spin 20s linear infinite !important;
+            will-change: transform;
         }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
 
         /* Modern Bento Grid Layout */
         .bento-grid {
@@ -126,34 +139,37 @@
             .bento-grid { grid-template-columns: 1fr; gap: 1rem; padding: 1rem; }
         }
 
-        /* Glass / Neumorphism Bento Box */
         .bento-box {
             background: var(--bento-bg);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--bento-border-main);
             border-top: 1px solid var(--bento-border-top);
             border-left: 1px solid var(--bento-border-main);
             border-radius: 2.5rem;
             padding: 2.5rem;
             position: relative;
-            overflow: hidden;
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            /* Fix: remove overflow-hidden to prevent title clipping on certain mobile engines */
+            overflow: visible; 
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, background 0.4s ease;
             transform-style: preserve-3d;
             cursor: pointer;
             text-decoration: none;
             display: flex;
             flex-direction: column;
             box-shadow: var(--bento-shadow);
+            will-change: transform, box-shadow; /* Optimize for animations */
         }
 
         .bento-box::before {
             content: ''; position: absolute; inset: 0;
             background: radial-gradient(circle at top left, rgba(255,255,255,0.4), transparent 70%);
             z-index: 0; pointer-events: none;
+            border-radius: inherit;
         }
         html.dark .bento-box::before {
             background: radial-gradient(circle at top left, rgba(255,255,255,0.1), transparent 70%);
+            border-radius: inherit;
         }
 
         .bento-box:hover {
@@ -173,19 +189,40 @@
             .bento-hero { grid-column: span 2; grid-row: auto; }
             .bento-wide, .bento-square { grid-column: span 1; }
         }
+
         @media (max-width: 640px) {
             .bento-grid { 
                 grid-template-columns: 1fr; 
                 gap: 1.25rem; 
-                padding: 1rem; 
-                padding-top: 5rem;
+                padding: 1.25rem; 
+                padding-top: 6rem;
             }
             .bento-hero, .bento-wide, .bento-square { 
                 grid-column: span 1 !important; 
                 grid-row: auto !important; 
             }
-            .bento-box { padding: 1.5rem; border-radius: 2rem; }
-            .bento-hero { padding: 2rem 1.5rem; }
+            .bento-box { 
+                padding: 1.75rem; 
+                border-radius: 2.25rem;
+                /* Max Performance: Disable backdrop-filter completely on mobile */
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+                /* Use a slightly more solid background instead */
+                background: rgba(255, 255, 255, 0.9);
+                transform-style: flat !important;
+                /* Snappier transitions for mobile tap */
+                transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, background 0.2s ease !important;
+            }
+            html.dark .bento-box {
+                background: rgba(20, 20, 25, 0.85);
+            }
+            /* Simplify hover for mobile to prevent lag */
+            .bento-box:hover {
+                transform: translateY(-2px) scale(1.01) !important;
+                box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1) !important;
+            }
+            .bento-hero { padding: 2.25rem 1.75rem; }
+            .content-z { transform: none !important; }
         }
 
         /* 3D Pop elements */
@@ -250,13 +287,16 @@
             border-radius: 50%;
             background: var(--bento-bg);
             backdrop-filter: blur(20px);
-            border: 1px solid var(--bento-border-main);
+            border: 1px solid rgba(15, 23, 42, 0.15); /* More visible border for light mode */
             box-shadow: var(--bento-shadow);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        html.dark .action-btn {
+            border: 1px solid var(--bento-border-main);
         }
         .action-btn:hover {
             transform: scale(1.1) rotate(5deg);
@@ -265,8 +305,14 @@
         }
         .action-btn i {
             color: var(--text-main);
-            transition: color 0.3s ease;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
+        /* Icon state animations (Shadcn style) */
+        #sunIcon { transform: rotate(90deg) scale(0); opacity: 0; }
+        #moonIcon { transform: rotate(0deg) scale(1); opacity: 1; }
+        
+        html.dark #sunIcon { transform: rotate(0deg) scale(1); opacity: 1; }
+        html.dark #moonIcon { transform: rotate(-90deg) scale(0); opacity: 0; }
         /* QR Modal Styles */
         .modal-overlay {
             position: fixed; top: 0; left: 0; 
@@ -305,6 +351,31 @@
             border-radius: 1.5rem; background: white;
             padding: 1rem; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
         }
+
+        /* Shadcn Style Theme Switching */
+        .switching, .switching * {
+            transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease !important;
+        }
+
+        /* Prevent artifacts at the bottom of the page on mobile */
+        html { 
+            height: 100%;
+            background-color: var(--bg-color); /* Root background matches theme */
+            overscroll-behavior-y: none; /* Disable bounce to fix the 'box bug' */
+            overflow-x: hidden;
+        }
+        /* Performance: Remove transitions on body for smoother theme toggle */
+        .disable-transitions,
+        .disable-transitions * {
+            transition: none !important;
+            animation: none !important;
+        }
+        
+        body {
+            background: transparent;
+            min-height: 100%;
+            transition: none; 
+        }
     </style>
 </head>
 <body>
@@ -325,8 +396,10 @@
 
         <!-- Theme Toggle Button -->
         <button id="themeToggleBtn" class="action-btn" aria-label="Mavzuni o'zgartirish">
-            <i id="sunIcon" data-lucide="sun" class="w-6 h-6 hidden dark:block text-yellow-300"></i>
-            <i id="moonIcon" data-lucide="moon" class="w-6 h-6 block dark:hidden text-indigo-500"></i>
+            <div class="relative w-6 h-6 flex items-center justify-center">
+                <i id="sunIcon" data-lucide="sun" class="absolute w-6 h-6 text-yellow-300"></i>
+                <i id="moonIcon" data-lucide="moon" class="absolute w-6 h-6 text-indigo-500"></i>
+            </div>
         </button>
     </div>
 
@@ -336,7 +409,7 @@
         <span class="font-bold text-sm tracking-wide">Havola nusxalandi!</span>
     </div>
 
-    <div class="min-h-screen py-8 lg:py-16 flex flex-col items-center justify-center pt-24 lg:pt-16" style="perspective: 1500px;">
+    <div class="min-h-screen py-8 lg:py-16 flex flex-col items-center justify-center pt-24 lg:pt-16">
         
         <div class="bento-grid">
             
@@ -352,9 +425,6 @@
                     </div>
                     <h1 class="text-4xl md:text-5xl font-black mb-4 tracking-tighter text-slate-800 dark:text-white">{{ profile.name }}</h1>
                     <p class="text-lg md:text-xl text-slate-600 dark:text-gray-300 font-medium max-w-sm leading-relaxed mb-6">{{ profile.bio }}</p>
-                    <div class="mt-auto inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.3em] magic-text bg-white/40 dark:bg-white/5 py-3 px-6 rounded-2xl border border-white/40 dark:border-white/10 shadow-xl backdrop-blur-md">
-                        <i data-lucide="sparkles" class="w-4 h-4 text-pink-500 dark:text-pink-400"></i> Premium Profile
-                    </div>
                 </div>
             </div>
 
@@ -470,18 +540,27 @@
         // Init icons
         lucide.createIcons();
 
+        // Check if mobile
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+        // Init Vanilla Tilt only for non-mobile or large screens
+        if (!isMobile) {
+            VanillaTilt.init(document.querySelectorAll("[data-tilt]"), {
+                max: 15,
+                speed: 400,
+                glare: true,
+                "max-glare": 0.2,
+            });
+        }
+
         // Theme Toggling Logic
         const htmlDoc = document.documentElement;
         const themeBtn = document.getElementById('themeToggleBtn');
-        const sunIcon = document.getElementById('sunIcon');
-        const moonIcon = document.getElementById('moonIcon');
 
         // Check local storage for theme preference
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme === 'light') {
             htmlDoc.classList.remove('dark');
-        } else if (savedTheme === 'dark') {
-            htmlDoc.classList.add('dark');
         } else {
             // Default is dark as per initial design
             htmlDoc.classList.add('dark');
@@ -489,6 +568,10 @@
         }
 
         themeBtn.addEventListener('click', () => {
+            // 1. Disable all transitions for instant switch (Shadcn/Apple style)
+            document.body.classList.add('disable-transitions');
+            
+            // 2. Perform the switch
             if (htmlDoc.classList.contains('dark')) {
                 htmlDoc.classList.remove('dark');
                 localStorage.setItem('theme', 'light');
@@ -496,6 +579,14 @@
                 htmlDoc.classList.add('dark');
                 localStorage.setItem('theme', 'dark');
             }
+
+            // 3. Force a reflow to ensure the theme change is processed without animation
+            void document.body.offsetHeight;
+
+            // 4. Re-enable transitions after the switch is done
+            setTimeout(() => {
+                document.body.classList.remove('disable-transitions');
+            }, 10); // Minimal delay
         });
 
         // QR Modal Logic
